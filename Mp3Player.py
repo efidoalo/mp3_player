@@ -16,12 +16,13 @@
 
 import vlc   # use the vlc python module for mp3 functionality
 import time
+import os
 
 class Mp3Player:
     
     def __init__(self, mp3_filename, 
-                 filepath_prefix="/home/andy/Documents/projects/mp3_player/songs/"):
-        mp3_filepath = filepath_prefix + mp3_filename
+            filepath_prefix=os.path.expanduser("~/Music")):
+        mp3_filepath = os.path.join(filepath_prefix, mp3_filename)
         self.mp3_name = mp3_filename
         self.mp3_player = vlc.MediaPlayer(mp3_filepath)
         self.play()

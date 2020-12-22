@@ -25,19 +25,20 @@ import wx.lib.statbmp
 
 # returns a list of strings (in no partiular order) where each string is a 
 # mp3 filename in the songs directory
-def get_list_of_songs():
-   songs_path = "/home/andy/Documents/projects/mp3_player/songs"
-   return os.listdir(songs_path)
+#def get_list_of_songs():
+#   songs_path = os.path.expanduser("~/Music")
+#   return os.listdir(songs_path)
 
 class mp3_player_gui(wx.Frame):
+
 
     def __init__(self, *args, **kw):
         # ensure the parent's __init__ is called
         super(mp3_player_gui, self).__init__(*args, **kw)
         
+        self.songs_path = os.path.expanduser("~/Music");
         self.mp3_player = self.get_first_song()
         self.current_time = -1
-
         mainPanel = wx.Panel(self)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -129,7 +130,7 @@ class mp3_player_gui(wx.Frame):
         
         ddsm_size = wx.Size(250,90)
         ddsm_pos = wx.Point(80,45)
-        songs = get_list_of_songs()
+        songs = os.listdir(self.songs_path)
         self.drop_down_song_menu = wx.ListBox(mainPanel,
                                          size=ddsm_size,
                                          pos=ddsm_pos,
@@ -238,7 +239,7 @@ class mp3_player_gui(wx.Frame):
         self.add_song_search.SetFont(font)
         self.add_song_search.Hide()
 
-        songs = get_list_of_songs()
+        songs = os.listdir(self.songs_path)
         ddasm_size = wx.Size(180,100)
         ddasm_pos = wx.Point(408, 227)
         self.drop_down_add_song_menu = wx.ListBox(mainPanel,
@@ -356,7 +357,7 @@ class mp3_player_gui(wx.Frame):
         self.edit_playlist_add_song_search.SetFont(font)
         self.edit_playlist_add_song_search.Hide()
 
-        songs = get_list_of_songs()
+        songs = os.listdir(self.songs_path)
         edit_playlist_add_song_drop_down_menu_size = wx.Size(150,90)
         edit_playlist_add_song_drop_down_menu_pos = wx.Point(440, 254)
         self.edit_playlist_add_song_drop_down_menu = wx.ListBox(mainPanel,
@@ -417,13 +418,13 @@ class mp3_player_gui(wx.Frame):
         self.delete_playlist_button.Hide()    
         ##
        
-        self.browser = wx.html2.WebView.New()
-        browser_pos = wx.Point(50, 160)
-        browser_size = wx.Size(500, 150)
-        self.browser.Create(mainPanel, 
-                            url="http://www.google.com",
-                            pos=browser_pos, 
-                            size=browser_size)
+       # self.browser = wx.html2.WebView.New()
+       # browser_pos = wx.Point(50, 160)
+       # browser_size = wx.Size(500, 150)
+       # self.browser.Create(mainPanel, 
+       #                     url="http://www.google.com",
+       #                     pos=browser_pos, 
+       #                     size=browser_size) 
         #self.browser.LoadURL("http://www.google.com")
         #
         self.createMenuBar()
@@ -554,7 +555,7 @@ class mp3_player_gui(wx.Frame):
     def edit_playlist_adaptive_drop_down_add_song_menu_handler(self, commandevent):
         self.edit_playlist_add_song_drop_down_menu.Show()
         search_bar_str = self.edit_playlist_add_song_search.GetLineText(0)
-        songslist = os.listdir("/home/andy/Documents/projects/mp3_player/songs")
+        songslist = os.listdir(self.songs_path)
         matching_songs = []
         for curr_song in songslist:
             search_bar_str = search_bar_str.lower()
@@ -703,17 +704,17 @@ class mp3_player_gui(wx.Frame):
     def prev_track_handler(self, commandevent):
         if self.playlist_playing == 1:
             prev_song = self.curr_playlist.get_prev_song()
-            self.play_mp3(prev_song)
+            self.play_mp3(prev_song, self.songs_path)
 
     def next_track_handler(self, commandevent):
         if self.playlist_playing == 1:
             next_song = self.curr_playlist.get_next_song()
-            self.play_mp3(next_song)
+            self.play_mp3(next_song, self.songs_path)
 
     def play_playlist_handler(self, commandevent):
         self.playlist_playing = 1
         first_song = self.curr_playlist.get_curr_song()
-        self.play_mp3(first_song)
+        self.play_mp3(first_song, self.songs_path)
 
     def playlist_to_play_selected_handler(self, commandevent):
         selected_playlist_name = commandevent.GetString()
@@ -1020,7 +1021,7 @@ class mp3_player_gui(wx.Frame):
             if (self.current_time == curr_time):
                 if (self.playlist_playing == 1):
                     next_song = self.curr_playlist.get_next_song()
-                    self.play_mp3(next_song)
+                    self.play_mp3(next_song, self.songs_path)
                     return
                 else:
                     self.play_button.SetLabel("Play")
@@ -1050,8 +1051,7 @@ class mp3_player_gui(wx.Frame):
     # an Mp3Player object. os.listdir returns a list of files in the directory 
     # with ordering not preserved
     def get_first_song(self):
-        songs_path = "/home/andy/Documents/projects/mp3_player/songs"
-        first_song = os.listdir(songs_path)[0]
+        first_song = os.listdir(self.songs_path)[0]
         mp3_player_first_song = Mp3Player.Mp3Player(first_song)
         return mp3_player_first_song
 
@@ -1135,12 +1135,12 @@ class mp3_player_gui(wx.Frame):
         self.delete_song_drop_down_list.Hide()
         self.create_playlist_save_playlist.Hide()
 
-        self.play_mp3(mp3_filename)
+        self.play_mp3(mp3_filename, self.songs_path)
    
     def adaptive_drop_down_add_song_menu_handler(self, commandevent):
         self.drop_down_add_song_menu.Show()
         search_bar_str = self.add_song_search.GetLineText(0)
-        songslist = os.listdir("/home/andy/Documents/projects/mp3_player/songs")
+        songslist = os.listdir(self.songs_path)
         matching_songs = []
         for curr_song in songslist:
             search_bar_str = search_bar_str.lower()
@@ -1154,7 +1154,7 @@ class mp3_player_gui(wx.Frame):
     def adaptive_drop_down_song_menu_handler(self, commandevent):
         self.drop_down_song_menu.Show()
         search_bar_str = self.search_bar.GetLineText(0)
-        songslist = os.listdir("/home/andy/Documents/projects/mp3_player/songs")
+        songslist = os.listdir(self.songs_path)
         matching_songs = []
         for curr_song in songslist:
             search_bar_str = search_bar_str.lower()
@@ -1180,7 +1180,7 @@ class mp3_player_gui(wx.Frame):
     # are started. the play button is set to display "pause" since the new
     # mp3 will be playing and the curr_song label is also updated
     def play_mp3(self, mp3_filename, 
-                 mp3_path="/home/andy/Documents/projects/mp3_player/songs/"):
+                 mp3_path):
         self.curr_song.SetLabel(mp3_filename)
         self.mp3_player.stop()
         progress_circle_pos = wx.Point(124, 93)

@@ -55,7 +55,7 @@ def list_all_playlists():
 # to be created. input arguemnents playlist_name is a string giving
 # the new playlist name and and songs_list is a list of song names
 # that constitutes the playlist. The song names in songs_list must
-# all be found in the /home/andy/Documents/projects/mp3_player/songs
+# all be found in the ~/Music directory
 # directory. If a playlist already exists with the name playlist_name in the 
 # "playlists" file, this function returns -1
 def create_new_playlist(playlist_name, songs_list):
